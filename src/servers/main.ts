@@ -8,6 +8,10 @@ import type { requestT } from "../middlewares";
 
 const PORT = process.env.WORKER_PORT || process.env.APP_PORT || 3000;
 
+if (!process.env.WORKER_PORT) {
+  await import("./store")
+}
+
 export const serverHandler = async (req: requestT, res: ServerResponse) => {
   try {
     console.log(`Handling on PID:${process.pid} PORT: ${PORT}`);

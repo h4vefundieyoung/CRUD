@@ -1,3 +1,6 @@
 import 'dotenv/config';
 
-import "./servers/cluster";
+const module = process.argv[3];
+
+module === "cluster" ? import('./servers/cluster') : import('./servers/main');
+
