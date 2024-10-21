@@ -1,19 +1,19 @@
 import { IncomingMessage } from "http";
 
-export type requestT = { body?: string | Object, parsedUrl?: URL } & IncomingMessage;
+export type requestT = { body?: string, parsedUrl?: URL, json?: Object } & IncomingMessage;
 export type middlewareT = (req: requestT) => void;
 export type middlewareParamsT = Parameters<middlewareT>;
 
-class MiddlewareManager {
-  middlewareList: middlewareT[] = [];
+export class MiddlewareManager {
+  private static middlewareList: middlewareT[] = [];
 
-  use (...args: middlewareT[]) {
-    this.middlewareList.push(...args);
+  static use (...args: middlewareT[]) {
+    MiddlewareManager.middlewareList.push(...args);
   }
 
-  process (...args: middlewareParamsT) {
+  static process (...args: middlewareParamsT) {
     return new Promise(async (res, rej) => {
-      for (let middleware of this.middlewareList) {
+      for (let middleware of MiddlewareManager.middlewareList) {
         try {
           await middleware(...args);
         } catch (e) {
@@ -24,5 +24,3 @@ class MiddlewareManager {
     })
   }
 }
-
-export const middlewareManager = new MiddlewareManager();

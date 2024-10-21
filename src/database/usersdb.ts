@@ -1,29 +1,34 @@
-import type { IUser } from "../services/users"
+export type IUserDTO = {
+  id: string;
+  username: string;
+  age: number;
+  hobbies: string[];
+}
 
-class UsersDB {
-  [s: string]: any;
+export class UsersDB {
+  static [s: string]: any;
 
-  private users: IUser[] = []
+  private static users: IUserDTO[] = []
 
-  get(): IUser[]
-  get (_id: string): IUser | null
-  get(_id?: string) {
+  static async get(_: never): Promise<IUserDTO[]>
+  static async get (_: never, _id: string): Promise<IUserDTO | null>
+  static async get(_: never, _id?: string) {
     if (!_id) {
-      return this.users;
+      return UsersDB.users;
     }
 
-    const user = this.users.find(({ id }) => _id === id);
+    const user = UsersDB.users.find(({ id }) => _id === id);
     return user ? user : null;
   }
 
-  post (_: unknown, user: IUser) {
-    return this.users.push(user);
+  static async post (user: IUserDTO) {
+    return UsersDB.users.push(user);
   }
 
-  put (_: unknown, _user: IUser) {
+  static async put (_user: IUserDTO) {
     let updated = false; 
 
-    this.users = this.users.map((user) => {
+    UsersDB.users = UsersDB.users.map((user) => {
       const match = user.id === _user.id;
 
       if (match) {
@@ -36,11 +41,9 @@ class UsersDB {
     return updated;
   }
 
-  delete (_id: string) {
-    const index = this.users.findIndex(({ id }) => _id === id);
+  static async delete (_:never, _id: string) {
+    const index = UsersDB.users.findIndex(({ id }) => _id === id);
 
-    return ~index ? Boolean(this.users.splice(index, 1)) : false;
+    return ~index ? Boolean(UsersDB.users.splice(index, 1)) : false;
   }
 }
-
-export const usersdb = new UsersDB();

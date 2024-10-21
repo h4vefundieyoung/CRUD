@@ -1,19 +1,24 @@
+import { MiddlewareManager } from "./middlewareManager";
+
 import type { middlewareT, requestT } from "./middlewareManager";
 
-import { middlewareManager } from "./middlewareManager";
-
 const parseBody: middlewareT = (req: requestT) => {
-  let body = '';
+  return new Promise((res, rej) => {
+    let body = '';
   
-  req.on('data', (chunk) => {
-    body += chunk;
-  });
-  req.on('end', () => {
-    try {
-      body = JSON.parse(body);
-    } catch {}
-    req.body = body;
+    req
+    .on('error', rej)
+    .on('data', (chunk) => {
+      body += chunk;
+    })
+    .on('end', () => {
+      try {
+        req.json = JSON.parse(body);
+      } catch {}
+      req.body = body;
+      res(null);
+    });
   });
 };
 
-middlewareManager.use(parseBody);
+MiddlewareManager.use(parseBody);

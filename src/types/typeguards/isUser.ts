@@ -1,6 +1,6 @@
-import type { IUser } from "../../services/users";
+import type { IUserDTO } from "../../database/usersdb";
 
-function isUser(obj: unknown): obj is IUser {
+export function isUser(obj: unknown): obj is IUserDTO {
   return typeof obj === 'object' &&
           obj !== null &&
           'name' in obj &&

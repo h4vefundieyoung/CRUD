@@ -1,3 +1,3 @@
 import 'dotenv/config';
 
-import "./worker.ts";
+import "./servers/cluster";
