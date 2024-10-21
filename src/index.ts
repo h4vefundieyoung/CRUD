@@ -1,3 +1,3 @@
 import 'dotenv/config';
 
-import "./database/server";
+import "./worker.ts";

@@ -1,20 +1,23 @@
-import { ServerResponse } from "http"
+import { ServerResponse } from "node:http"
 
 import { usersdb } from "./usersdb";
+
+import type { requestT } from "../middlewares/middlewareManager";
 
 const wrongRequestMessage = "Wrong db request";
 
 class DBController {
-  users = usersdb;
+  private users = usersdb;
 
-  handleRequest(url: URL, method: string, body: string, res: ServerResponse) {
-    const [_, path, param] = url.pathname.split("/");
-    const bodyObject = body && JSON.parse(body);
+  handleRequest(req: requestT, res: ServerResponse) {
+    const { parsedUrl, body } = req;
+    const [_, path, param] = parsedUrl!.pathname.split("/");
+    const method = req.method || "";
 
     switch(path) {
       case "users": {
-        if (this.users[method.toLowerCase()]) {
-          const data = this.users[method](param, bodyObject);
+        if (this.users[method]) {
+          const data = this.users[method](param, body);
           const isObject = typeof data === "object" && data !== null;
           const statusCode = data ? 200 : 404;
           const headers = { 'Content-Type': isObject ? 'application/json' : 'text/plain' }
