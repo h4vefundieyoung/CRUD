@@ -20,7 +20,7 @@ const parseBody: middlewareT = (req: requestT) => {
       try {
         req.json = JSON.parse(body);
       } catch {}
-      req.body = body;
+      req.body = body ? body : undefined;
       res(null);
     });
   });

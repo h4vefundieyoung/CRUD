@@ -7,7 +7,7 @@ import { sendServerError } from "../helpers";
 import { MiddlewareManager, requestT } from "../middlewares";
 
 const PORT = Number(process.env.APP_PORT) || 3000;
-const HOST = "http://localhost";
+const HOST = `http://localhost`;
 
 if (cluster.isPrimary) {
   await import("./store");
@@ -19,10 +19,8 @@ if (cluster.isPrimary) {
     const port = ports.shift();
 
     try {
-      const { body, headers: workerHeaders, status, statusText } = await fetch(`${HOST}:${port}${url}`, { method, body: reqBody });
-      
-      res.writeHead(status, statusText, Object.fromEntries(workerHeaders.entries()));
-
+      const { body, status, statusText } = await fetch(`${HOST}:${port}${url}`, { method, body: reqBody}) ;
+      res.writeHead(status, statusText);
       if (body) {
         pipeline(body, res, (e) => {
           if (e) {
@@ -36,6 +34,7 @@ if (cluster.isPrimary) {
       
       port && ports.push(port);
     } catch (e) {
+      console.log(e)
       sendServerError(res);
     }
   }).listen(PORT);

@@ -31,18 +31,17 @@ class UsersController implements Controller {
           sendServerError(res);
         }
       }
-
-      const { body, status, statusText, headers, ok } = await usersService.requestData(method!, req.body, param);
+      
+      const { body, status, statusText, ok } = await usersService.requestData(method!, req.body, param);
       const updatedStatus = ok ? isPost ? 201 : isDelete ? 204 : status : status;
-
-      res.writeHead(updatedStatus, statusText, Object.fromEntries(headers.entries()));
-
+      
+      res.writeHead(updatedStatus, statusText);
+  
       if (body) {
         pipeline(body, res, (e) => {
           if (e) {
             return !res.closed && sendServerError(res);
           }
-          
           res.end();
         });
       } else {
