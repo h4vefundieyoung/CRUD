@@ -1,9 +1,10 @@
 import { createServer } from "node:http";
 import { cpus, EOL } from "node:os";
-import cluster from "node:cluster";
 import { pipeline } from "node:stream";
+import cluster from "node:cluster";
 
-import { sendServerError, convertToHeadersInit } from "../helpers";
+import { sendServerError } from "../helpers";
+import { MiddlewareManager, requestT } from "../middlewares";
 
 const PORT = Number(process.env.APP_PORT) || 3000;
 const HOST = "http://localhost";
@@ -12,12 +13,14 @@ if (cluster.isPrimary) {
   await import("./store");
   const ports: Number[] = [];
 
-  const loadBalancer = createServer(async (req, res) => {
-    const { method, headers, url } = req;
+  const loadBalancer = createServer(async (req: requestT, res) => {
+    await MiddlewareManager.process(req);
+    const { method, url, body: reqBody } = req;
     const port = ports.shift();
-    try {
-      const { body, headers: workerHeaders, status, statusText } = await fetch(`${HOST}:${port}${url}`, { method, headers: convertToHeadersInit(headers) });
 
+    try {
+      const { body, headers: workerHeaders, status, statusText } = await fetch(`${HOST}:${port}${url}`, { method, body: reqBody });
+      
       res.writeHead(status, statusText, Object.fromEntries(workerHeaders.entries()));
 
       if (body) {

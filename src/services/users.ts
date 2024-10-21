@@ -5,9 +5,8 @@ const DB_HOST = process.env.DB_HOST || `http://localhost`;
   
 class UsersService implements Service {
   async requestData (method: string, body?: string, param?: string) {
-    const isBodyAllowed = method !== "get" && method !== "head";
     const URL = `${DB_HOST}:${DB_PORT}/${param ? param : ""}`; 
-    return fetch(URL, { body: isBodyAllowed ? body : null, method });
+    return fetch(URL, { body, method });
   }
 };
 

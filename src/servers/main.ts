@@ -1,8 +1,8 @@
 import { createServer, ServerResponse } from "node:http";
 
 import { MiddlewareManager } from "../middlewares";
-import { mainController } from "../controllers";
 import { sendServerError } from "../helpers";
+import { AppRouter } from "../router";
 
 import type { requestT } from "../middlewares";
 
@@ -12,7 +12,7 @@ export const serverHandler = async (req: requestT, res: ServerResponse) => {
   try {
     console.log(`Handling on PID:${process.pid} PORT: ${PORT}`);
     await MiddlewareManager.process(req);
-    mainController.handleRequest(req, res);
+    AppRouter.processRequest(req, res);
   } catch (e) {
     sendServerError(res);
   };

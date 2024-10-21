@@ -11,31 +11,31 @@ export class UsersDB {
   private static users: IUserDTO[] = []
 
   static async get(_: never): Promise<IUserDTO[]>
-  static async get (_: never, _id: string): Promise<IUserDTO | null>
+  static async get (_: never, _id: string): Promise<IUserDTO | false>
   static async get(_: never, _id?: string) {
     if (!_id) {
       return UsersDB.users;
     }
 
     const user = UsersDB.users.find(({ id }) => _id === id);
-    return user ? user : null;
+    return user ? user : false;
   }
 
   static async post (user: IUserDTO) {
     return UsersDB.users.push(user);
   }
 
-  static async put (_user: IUserDTO) {
+  static async put (_user: IUserDTO, id: string) {
     let updated = false; 
 
     UsersDB.users = UsersDB.users.map((user) => {
-      const match = user.id === _user.id;
+      const match = user.id === id;
 
       if (match) {
         updated = true;
       }
 
-      return match ? _user : user;
+      return match ? {..._user, id } : user;
     });
 
     return updated;

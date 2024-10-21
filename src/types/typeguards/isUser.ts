@@ -3,8 +3,10 @@ import type { IUserDTO } from "../../database/usersdb";
 export function isUser(obj: unknown): obj is IUserDTO {
   return typeof obj === 'object' &&
           obj !== null &&
-          'name' in obj &&
-          typeof obj.name === 'string' &&
+          'username' in obj &&
+          typeof obj.username === 'string' &&
           'age' in obj &&
-          typeof obj.age === 'number';
+          !isNaN(Number(obj.age)) &&
+          'hobbies' in obj && 
+          Array.isArray(obj.hobbies);
 }

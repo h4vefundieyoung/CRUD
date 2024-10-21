@@ -1,2 +1,2 @@
 export { dbController } from "./dbController";
-export { mainController } from "./mainController";
+export { usersController } from "./usersController";
